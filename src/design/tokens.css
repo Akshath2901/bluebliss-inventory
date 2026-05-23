@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ══════════════════════════════════════════════════════
+   BLUEBLISS INVENTORY — Design System v2.0
+   Neutral-first, accent-controlled, production-grade
+══════════════════════════════════════════════════════ */
+
+:root {
+  /* Backgrounds */
+  --inv-bg:        #F7F6F3;
+  --inv-bg2:       #F0EFEb;
+  --inv-surface:   #FFFFFF;
+  --inv-surface2:  #F7F6F3;
+  --inv-surface3:  #F0EFEB;
+
+  /* Borders */
+  --inv-border:    #E8E6E1;
+  --inv-border-md: #D5D2CB;
+
+  /* Brand accent — used sparingly */
+  --inv-primary:      #16A34A;
+  --inv-primary-d:    #15803D;
+  --inv-primary-glow: rgba(22,163,74,0.12);
+  --inv-primary-bg:   rgba(22,163,74,0.06);
+
+  /* Semantic */
+  --inv-gold:   #B45309;
+  --inv-gold-bg: rgba(180,83,9,0.07);
+  --inv-red:    #DC2626;
+  --inv-red-bg: rgba(220,38,38,0.06);
+  --inv-orange: #D97706;
+  --inv-orange-bg: rgba(217,119,6,0.07);
+  --inv-blue:   #2563EB;
+  --inv-blue-bg: rgba(37,99,235,0.07);
+
+  /* Typography */
+  --inv-text:       #1C1B19;
+  --inv-text-dim:   #4A4845;
+  --inv-text-muted: #9B9894;
+  --inv-text-xmuted:#BCBAB6;
+
+  /* Sidebar */
+  --inv-sb-bg:      #FFFFFF;
+  --inv-sb-border:  #E8E6E1;
+  --inv-sb-text:    #6B6965;
+  --inv-sb-hover:   #F4F3F0;
+  --inv-sb-active:  #F0FDF4;
+  --inv-sb-active-text: #15803D;
+
+  /* Fonts */
+  --font-main:  'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:  'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.07);
+  --shadow-lg:  0 12px 32px rgba(0,0,0,0.10);
+  --shadow-xl:  0 24px 64px rgba(0,0,0,0.14);
+
+  /* Radius */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  18px;
+
+  /* Transitions */
+  --t-fast:   0.12s ease;
+  --t-normal: 0.22s ease;
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+  --inv-bg:        #111110;
+  --inv-bg2:       #161513;
+  --inv-surface:   #1C1B19;
+  --inv-surface2:  #232220;
+  --inv-surface3:  #2A2927;
+  --inv-border:    #2E2D2B;
+  --inv-border-md: #3D3B38;
+  --inv-primary:      #22C55E;
+  --inv-primary-d:    #16A34A;
+  --inv-primary-glow: rgba(34,197,94,0.15);
+  --inv-primary-bg:   rgba(34,197,94,0.08);
+  --inv-gold:     #F59E0B;
+  --inv-gold-bg:  rgba(245,158,11,0.1);
+  --inv-red:      #F87171;
+  --inv-red-bg:   rgba(248,113,113,0.08);
+  --inv-orange:   #FB923C;
+  --inv-orange-bg:rgba(251,146,60,0.08);
+  --inv-blue:     #60A5FA;
+  --inv-blue-bg:  rgba(96,165,250,0.08);
+  --inv-text:       #FAFAF9;
+  --inv-text-dim:   #D6D4D0;
+  --inv-text-muted: #78766F;
+  --inv-text-xmuted:#4A4845;
+  --inv-sb-bg:      #161513;
+  --inv-sb-border:  #2E2D2B;
+  --inv-sb-text:    #78766F;
+  --inv-sb-hover:   #232220;
+  --inv-sb-active:  rgba(34,197,94,0.08);
+  --inv-sb-active-text: #22C55E;
+}
+
+/* ── Resets ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: var(--font-main);
+  background:  var(--inv-bg);
+  color:       var(--inv-text);
+  font-size:   14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+::-webkit-scrollbar       { width:4px; height:4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--inv-border-md); border-radius: 4px; }
+::selection { background: var(--inv-primary-bg); }
+
+/* ── Keyframes ── */
+@keyframes invSlideUp   { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+@keyframes invFadeIn    { from { opacity:0; } to { opacity:1; } }
+@keyframes invPulse     { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+@keyframes invBarGrow   { from { width:0 !important; } }
+@keyframes invSpin      { to { transform:rotate(360deg); } }
+@keyframes invGlow      { 0%,100%{box-shadow:0 0 0 0 var(--inv-primary-glow);} 50%{box-shadow:0 0 0 4px var(--inv-primary-glow);} }
+@keyframes invSlideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }

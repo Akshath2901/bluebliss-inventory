@@ -1,0 +1,367 @@
+/* ══════════════════════════════════════════════════════
+   BLUEBLISS INVENTORY — Mobile Optimized
+   Targets: phones < 768px
+══════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── Layout ── */
+  .inv-main { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .inv-content { padding-bottom: 80px; }
+
+  /* ── Topbar ── */
+  .inv-topbar {
+    height: 48px;
+    padding: 0 14px;
+    gap: 8px;
+  }
+  .inv-topbar-live { flex: 1; }
+  .inv-live-text { display: none; }
+  .inv-user-pill { padding: 4px 8px 4px 4px; gap: 6px; }
+  .inv-user-pill-role { display: none; }
+  .inv-user-pill-name { font-size: 11px; }
+  .inv-topbar-avatar { width: 22px; height: 22px; font-size: 9px; }
+  .inv-icon-btn { width: 28px; height: 28px; }
+
+  /* ── User dropdown ── */
+  .inv-user-menu { right: 8px; top: 54px; min-width: 200px; }
+
+  /* ── Page padding ── */
+  .dash-page,
+  .sc-page,
+  .ut-page,
+  .po-page,
+  .wl-page,
+  .sp-page,
+  .ca-page,
+  .rp-page,
+  .ai-page,
+  .sf-page {
+    padding: 14px 12px 80px !important;
+  }
+
+  /* ── Page headers ── */
+  .dash-header, .sc-header, .ut-header, .po-header,
+  .wl-header, .sp-header, .ca-header, .rp-header,
+  .ai-header, .sf-header {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .sc-title, .ut-title, .po-title, .wl-title,
+  .sp-title, .ca-title, .rp-title, .ai-title, .sf-title {
+    font-size: 20px !important;
+  }
+  .sc-hactions, .ut-hactions, .po-hactions, .wl-hactions,
+  .sp-hactions, .ca-hactions, .sf-hactions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  .sc-btn-add, .ut-btn-log, .po-btn-new,
+  .wl-btn-log, .sp-btn-add, .sf-btn-add {
+    flex: 1;
+    padding: 9px 12px !important;
+    font-size: 12px !important;
+  }
+  .sc-btn-exp, .ut-btn-exp, .po-btn-exp,
+  .wl-btn-exp, .sp-btn-exp, .sf-btn-exp,
+  .ca-btn-exp, .rp-export-btn {
+    flex: 1;
+    padding: 9px 10px !important;
+    font-size: 11px !important;
+    text-align: center;
+  }
+
+  /* ── Dashboard Hero ── */
+  .dash-hero { height: 160px !important; }
+  .dash-hero-inner { padding: 0 16px 18px !important; }
+  .dash-hero-title { font-size: 22px !important; }
+  .dash-greeting-tag { font-size: 10px !important; }
+  .dash-hero-date { font-size: 11px !important; }
+  .dash-hero-clock { font-size: 14px !important; margin-bottom: 8px !important; }
+  .dash-hero-badge { font-size: 9px !important; padding: 3px 8px !important; }
+  .dash-hero-chef { display: none !important; }
+
+  /* ── Dashboard content ── */
+  .dash-content { padding: 12px 12px 80px !important; gap: 12px !important; }
+
+  /* ── KPI cards ── */
+  .dash-kpi-row,
+  .sc-stats,
+  .ut-stats,
+  .po-stats,
+  .wl-stats,
+  .sf-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+  .dash-kpi,
+  .sc-stat,
+  .ut-stat,
+  .wl-stat,
+  .sf-stat {
+    padding: 10px 12px !important;
+  }
+  .dash-kpi-val,
+  .sc-stat-val,
+  .ut-stat-val,
+  .wl-stat-val,
+  .sf-stat-val {
+    font-size: 20px !important;
+  }
+  .dash-kpi-label,
+  .sc-stat-lbl,
+  .ut-stat-label,
+  .wl-stat-label,
+  .sf-stat-label {
+    font-size: 9px !important;
+  }
+  .dash-kpi-sub,
+  .ut-stat-sub,
+  .wl-stat-sub,
+  .sf-stat-sub {
+    font-size: 9px !important;
+  }
+
+  /* ── Mid row cards ── */
+  .dash-mid-row,
+  .dash-chart-row,
+  .dash-bottom-row,
+  .sf-analytics-row,
+  .ut-charts,
+  .wl-charts,
+  .ca-charts,
+  .rp-charts-row {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .dash-kitchen-snap { display: none !important; }
+
+  /* ── Cards ── */
+  .dash-card,
+  .rp-card,
+  .sf-card,
+  .sf-sal-card,
+  .sf-shift-card,
+  .sf-salary-card,
+  .po-card,
+  .ai-card {
+    padding: 14px 14px !important;
+    border-radius: 12px !important;
+  }
+  .dash-card-title,
+  .rp-card-title,
+  .sf-card-title {
+    font-size: 13px !important;
+  }
+
+  /* ── Quick actions ── */
+  .dash-actions { grid-template-columns: repeat(3, 1fr) !important; gap: 6px !important; }
+  .dash-action-btn { padding: 10px 6px !important; }
+  .dash-action-icon { font-size: 18px !important; }
+  .dash-action-label { font-size: 10px !important; }
+
+  /* ── Alerts ── */
+  .dash-alert-item { padding: 8px 10px !important; }
+  .dash-alert-name { font-size: 12px !important; }
+  .dash-alert-sub { font-size: 10px !important; }
+  .dash-order-btn { padding: 4px 8px !important; font-size: 10px !important; }
+
+  /* ── AI card ── */
+  .dash-ai-text { font-size: 12px !important; line-height: 1.6 !important; }
+  .dash-ai-orb { width: 32px !important; height: 32px !important; font-size: 14px !important; }
+
+  /* ── Tables ── */
+  .sc-table-card,
+  .sf-table-card,
+  .ca-table-card {
+    border-radius: 12px !important;
+    overflow: hidden;
+  }
+  .sc-table-wrap,
+  .sf-table-wrap,
+  .ca-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .sc-table,
+  .sf-table,
+  .ca-table { min-width: 600px; font-size: 11px !important; }
+  .sc-table th,
+  .sf-table th,
+  .ca-table th { padding: 9px 10px !important; font-size: 8px !important; }
+  .sc-table td,
+  .sf-table td,
+  .ca-table td { padding: 8px 10px !important; font-size: 11px !important; }
+
+  /* ── Controls ── */
+  .sc-controls,
+  .ut-log-controls,
+  .sp-controls,
+  .sf-controls,
+  .rp-tabs {
+    flex-wrap: wrap;
+    gap: 8px !important;
+  }
+  .sc-search,
+  .sf-search,
+  .sp-search,
+  .ut-search,
+  .wl-search {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+  .sc-ftabs,
+  .sf-ftabs,
+  .sp-ftabs,
+  .po-ftabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .sc-ftab,
+  .sf-ftab,
+  .sp-ftab,
+  .po-ftab,
+  .rp-ptab,
+  .rp-tab {
+    padding: 6px 10px !important;
+    font-size: 9px !important;
+    flex: 1;
+    text-align: center;
+  }
+  .sc-sel,
+  .sf-sel,
+  .sp-sel,
+  .ca-sel { width: 100%; }
+
+  /* ── Staff tabs ── */
+  .sf-tabs { overflow-x: auto; gap: 2px !important; padding: 3px !important; }
+  .sf-tab { padding: 7px 12px !important; font-size: 11px !important; white-space: nowrap; }
+
+  /* ── Attendance grid ── */
+  .sf-att-grid-wrap { border-radius: 10px !important; }
+  .sf-att-grid { font-size: 10px !important; }
+  .sf-att-cell { width: 28px !important; height: 24px !important; font-size: 9px !important; border-radius: 5px !important; }
+  .sf-att-name-col { min-width: 90px !important; padding: 8px 10px !important; }
+  .sf-att-role-col { min-width: 60px !important; display: none; }
+  .sf-att-summary-cards { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+
+  /* ── Supplier cards ── */
+  .sp-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .sp-card { padding: 14px 16px !important; }
+  .sp-card-metrics { grid-template-columns: repeat(3, 1fr) !important; }
+  .sp-metric-val { font-size: 13px !important; }
+
+  /* ── PO cards ── */
+  .po-list { gap: 10px !important; }
+  .po-card-head { padding: 12px 14px !important; }
+  .po-card-body { padding: 10px 14px !important; }
+  .po-card-foot { padding: 10px 14px !important; flex-wrap: wrap; gap: 6px; }
+  .po-po-num { font-size: 13px !important; }
+  .po-total { font-size: 16px !important; }
+  .po-btn-advance,
+  .po-btn-detail { font-size: 11px !important; padding: 7px 12px !important; }
+
+  /* ── Salary cards ── */
+  .sf-sal-breakdown {
+    flex-wrap: wrap;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+  }
+  .sf-sbd-item { min-width: 70px; }
+  .sf-sbd-sep { display: none; }
+  .sf-salary-summary {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 7px !important;
+  }
+  .sf-txn-meta { flex-direction: column; gap: 3px !important; }
+
+  /* ── Shift cards ── */
+  .sf-shifts-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+
+  /* ── Reports ── */
+  .rp-kpis { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+  .rp-kpi { padding: 10px 12px !important; }
+  .rp-kpi-val { font-size: 18px !important; }
+  .rp-waste-summary { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+  .rp-stock-cards { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+  .rp-export-grid { grid-template-columns: 1fr !important; gap: 8px !important; }
+  .rp-export-card { padding: 12px 14px !important; }
+
+  /* ── AI page ── */
+  .ai-features-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+  .ai-feature-card { padding: 14px 12px !important; }
+  .ai-reorder-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .ai-pred-left { min-width: 120px !important; }
+  .ai-reorder-details { grid-template-columns: repeat(3, 1fr) !important; }
+  .ai-loading-card { flex-direction: column !important; text-align: center !important; padding: 24px !important; }
+  .ai-summary-meta { flex-direction: column !important; gap: 4px !important; font-size: 9px !important; }
+
+  /* ── Cost analysis ── */
+  .ca-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+  .ca-detail-kpis { grid-template-columns: repeat(2, 1fr) !important; }
+  .ca-controls { gap: 6px !important; }
+
+  /* ── Modals ── */
+  .sc-modal, .ut-modal, .po-modal, .wl-modal,
+  .sp-modal, .ca-modal, .sf-modal, .ai-modal {
+    padding: 20px 16px !important;
+    width: 95% !important;
+    max-height: 88vh !important;
+    border-radius: 16px !important;
+  }
+  .sc-mfrow, .ut-mfrow, .po-mfrow, .wl-mfrow,
+  .sp-mfrow, .sf-mfrow { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .sc-mactions, .ut-mactions, .po-mactions,
+  .wl-mactions, .sp-mactions, .sf-mactions {
+    gap: 8px !important;
+  }
+  .sc-btn-confirm, .ut-btn-confirm, .po-btn-confirm,
+  .wl-btn-confirm, .sp-btn-confirm, .sf-btn-confirm {
+    padding: 11px !important;
+    font-size: 13px !important;
+  }
+
+  /* ── Login ── */
+  .login-card { padding: 24px 20px !important; border-radius: 14px !important; }
+  .login-title { font-size: 20px !important; }
+
+  /* ── Charts ── */
+  .recharts-wrapper { touch-action: pan-y !important; }
+
+  /* ── Seed page ── */
+  .seed-container { padding: 20px 16px !important; }
+
+  /* ── Bottom nav for mobile ── */
+  .inv-mobile-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--inv-surface);
+    border-top: 1px solid var(--inv-border);
+    display: flex;
+    z-index: 100;
+    padding: 6px 0 env(safe-area-inset-bottom, 6px);
+  }
+  .inv-mobile-nav-btn {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    background: none; border: none;
+    padding: 6px 4px; cursor: pointer;
+    color: var(--inv-text-muted);
+    font-family: var(--font-main);
+    font-size: 9px; font-weight: 500;
+    transition: color 0.15s ease;
+  }
+  .inv-mobile-nav-btn.active { color: var(--inv-primary); }
+  .inv-mobile-nav-icon { font-size: 18px; line-height: 1; }
+
+  /* Hide sidebar on mobile since we have bottom nav */
+  .inv-sb.mob { display: none !important; }
+}
+
+/* ── Small phones ── */
+@media (max-width: 375px) {
+  .dash-kpi-val { font-size: 18px !important; }
+  .dash-hero { height: 140px !important; }
+  .dash-hero-title { font-size: 20px !important; }
+  .dash-actions { grid-template-columns: repeat(2, 1fr) !important; }
+}
