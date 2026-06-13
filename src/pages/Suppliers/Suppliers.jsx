@@ -5,15 +5,6 @@ import { useAuth } from '../../context/AuthContext.jsx';
 
 const CATEGORIES = ['All','Proteins','Vegetables','Bakery','Dairy','Condiments','Beverages'];
 
-const INIT_SUPPLIERS = [
-  { id:1, name:'Fresh Farms', contact:'Ravi Kumar', phone:'98765 43210', email:'ravi@freshfarms.in', address:'Secunderabad, Hyderabad', category:'Proteins', ingredients:['Chicken Patty','Mutton Patty'], leadTimeDays:1, rating:4.8, paymentTerms:'Net 7', totalOrders:24, totalSpent:186000, lastOrder:'May 10, 2026', notes:'Reliable, always on time. Call before 10am.' },
-  { id:2, name:'Green Valley', contact:'Sunita Rao', phone:'91234 56789', email:'sunita@greenvalley.in', address:'LB Nagar, Hyderabad', category:'Vegetables', ingredients:['Lettuce','Tomato','Onion'], leadTimeDays:1, rating:4.5, paymentTerms:'Net 14', totalOrders:18, totalSpent:72000, lastOrder:'May 11, 2026', notes:'Fresh produce daily. WhatsApp orders preferred.' },
-  { id:3, name:'Bake House', contact:'Ahmed Khan', phone:'87654 32109', email:'ahmed@bakehouse.in', address:'Jubilee Hills, Hyderabad', category:'Bakery', ingredients:['Burger Bun','Pizza Base'], leadTimeDays:2, rating:4.2, paymentTerms:'Cash on delivery', totalOrders:15, totalSpent:61500, lastOrder:'May 9, 2026', notes:'Order 2 days in advance. Minimum order 100 pcs.' },
-  { id:4, name:'Dairy Direct', contact:'Meera Sharma', phone:'76543 21098', email:'meera@dairydirect.in', address:'Begumpet, Hyderabad', category:'Dairy', ingredients:['Cheese Slice','Mozzarella'], leadTimeDays:1, rating:4.6, paymentTerms:'Net 7', totalOrders:20, totalSpent:148000, lastOrder:'May 11, 2026', notes:'Cold chain maintained. Early morning delivery.' },
-  { id:5, name:'Spice Route', contact:'Farhan Ali', phone:'65432 10987', email:'farhan@spiceroute.in', address:'Old City, Hyderabad', category:'Condiments', ingredients:['Tandoori Sauce'], leadTimeDays:3, rating:4.0, paymentTerms:'Net 30', totalOrders:8, totalSpent:38400, lastOrder:'May 5, 2026', notes:'Bulk orders get 10% discount.' },
-  { id:6, name:'Metro Cash & Carry', contact:'Manager', phone:'044-12345678', email:'hyd@metro.in', address:'Kukatpally, Hyderabad', category:'Vegetables', ingredients:['Onion','Tomato','Lettuce'], leadTimeDays:0, rating:4.3, paymentTerms:'Cash', totalOrders:12, totalSpent:28000, lastOrder:'May 8, 2026', notes:'Self pickup. Open 6am–10pm.' },
-];
-
 function StarRating({ rating }) {
   return (
     <div className="sp-stars">
@@ -44,30 +35,50 @@ export default function Suppliers() {
 
   const showToast = msg => { setToast(msg); setTimeout(()=>setToast(''),3000); };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!form.name.trim()) { showToast('Enter supplier name'); return; }
-    const newS = { ...form, id:Date.now(), ingredients:form.ingredients.split(',').map(s=>s.trim()).filter(Boolean), leadTimeDays:parseInt(form.leadTimeDays)||1, rating:parseFloat(form.rating)||4.0, totalOrders:0, totalSpent:0, lastOrder:'Never' };
-    if (editingId) {
-      setSuppliers(p=>p.map(s=>s.id===editingId?{...s,...newS,id:editingId}:s));
-      showToast('Supplier updated');
-    } else {
-      setSuppliers(p=>[newS,...p]);
-      showToast('Supplier added');
+    const payload = {
+      name: form.name,
+      contact: form.contact,
+      phone: form.phone,
+      email: form.email,
+      address: form.address,
+      category: form.category,
+      ingredients: form.ingredients.split(',').map(s=>s.trim()).filter(Boolean),
+      leadTimeDays: parseInt(form.leadTimeDays)||1,
+      rating: parseFloat(form.rating)||4.0,
+      paymentTerms: form.paymentTerms,
+      notes: form.notes,
+    };
+    try {
+      if (editingId) {
+        await fbUpdateSupplier(editingId, payload);
+        showToast('Supplier updated');
+      } else {
+        await fbAddSupplier({ ...payload, totalOrders:0, totalSpent:0, lastOrder:'Never' });
+        showToast('Supplier added');
+      }
+      setForm({name:'',contact:'',phone:'',email:'',address:'',category:'Proteins',ingredients:'',leadTimeDays:1,rating:4.5,paymentTerms:'Net 7',notes:''});
+      setShowModal(false); setEditingId(null);
+    } catch (e) {
+      showToast(editingId ? 'Update failed' : 'Add failed'); console.error(e);
     }
-    setForm({name:'',contact:'',phone:'',email:'',address:'',category:'Proteins',ingredients:'',leadTimeDays:1,rating:4.5,paymentTerms:'Net 7',notes:''});
-    setShowModal(false); setEditingId(null);
   };
 
   const handleEdit = s => {
     setEditingId(s.id);
-    setForm({...s, ingredients:s.ingredients.join(', ')});
+    setForm({...s, ingredients:(s.ingredients||[]).join(', ')});
     setShowModal(true);
   };
 
-  const handleDelete = id => {
+  const handleDelete = async id => {
     if (!window.confirm('Remove this supplier?')) return;
-    setSuppliers(p=>p.filter(s=>s.id!==id));
-    setShowDetail(null); showToast('Supplier removed');
+    try {
+      await fbDeleteSupplier(id);
+      setShowDetail(null); showToast('Supplier removed');
+    } catch (e) {
+      showToast('Remove failed'); console.error(e);
+    }
   };
 
   const exportCSV = () => {
@@ -79,16 +90,16 @@ export default function Suppliers() {
 
   const filtered = useMemo(()=>{
     let list=[...suppliers];
-    if(search.trim()) list=list.filter(s=>s.name.toLowerCase().includes(search.toLowerCase())||s.contact.toLowerCase().includes(search.toLowerCase())||s.ingredients.some(i=>i.toLowerCase().includes(search.toLowerCase())));
+    if(search.trim()) list=list.filter(s=>s.name.toLowerCase().includes(search.toLowerCase())||(s.contact||'').toLowerCase().includes(search.toLowerCase())||(s.ingredients||[]).some(i=>i.toLowerCase().includes(search.toLowerCase())));
     if(filterCat!=='All') list=list.filter(s=>s.category===filterCat);
     return list;
   },[suppliers,search,filterCat]);
 
   const stats = {
     total:      suppliers.length,
-    avgRating:  (suppliers.reduce((s,x)=>s+x.rating,0)/suppliers.length).toFixed(1),
-    totalSpent: suppliers.reduce((s,x)=>s+x.totalSpent,0),
-    fastestLead:Math.min(...suppliers.map(s=>s.leadTimeDays)),
+    avgRating:  suppliers.length ? (suppliers.reduce((s,x)=>s+(x.rating||0),0)/suppliers.length).toFixed(1) : '0.0',
+    totalSpent: suppliers.reduce((s,x)=>s+(x.totalSpent||0),0),
+    fastestLead:suppliers.length ? Math.min(...suppliers.map(s=>s.leadTimeDays||0)) : 0,
   };
 
   return (
@@ -128,7 +139,13 @@ export default function Suppliers() {
       </div>
 
       <div className="sp-grid">
-        {filtered.length===0&&<div className="sp-empty"><span>🏭</span><p>No suppliers found</p></div>}
+        {!loading && filtered.length===0 && (
+          <div className="sp-empty">
+            <span>🏭</span>
+            <p>{suppliers.length===0 ? 'No suppliers yet — add your first one to get started' : 'No suppliers match your filters'}</p>
+          </div>
+        )}
+        {loading && <div className="sp-empty"><span>⏳</span><p>Loading suppliers…</p></div>}
         {filtered.map((s,i)=>(
           <div key={s.id} className="sp-card" style={{animationDelay:i*.07+'s'}}>
             <div className="sp-card-head">
@@ -151,22 +168,22 @@ export default function Suppliers() {
             </div>
 
             <div className="sp-ingredients">
-              {s.ingredients.map((ing,j)=>(
+              {(s.ingredients||[]).map((ing,j)=>(
                 <span key={j} className="sp-ing-tag">{ing}</span>
               ))}
             </div>
 
             <div className="sp-card-metrics">
               <div className="sp-metric">
-                <p className="sp-metric-val">{s.totalOrders}</p>
+                <p className="sp-metric-val">{s.totalOrders||0}</p>
                 <p className="sp-metric-lbl">Orders</p>
               </div>
               <div className="sp-metric">
-                <p className="sp-metric-val">₹{Math.round(s.totalSpent/1000)}k</p>
+                <p className="sp-metric-val">₹{Math.round((s.totalSpent||0)/1000)}k</p>
                 <p className="sp-metric-lbl">Total Spent</p>
               </div>
               <div className="sp-metric">
-                <p className="sp-metric-val">{s.lastOrder}</p>
+                <p className="sp-metric-val">{s.lastOrder||'Never'}</p>
                 <p className="sp-metric-lbl">Last Order</p>
               </div>
             </div>
@@ -193,13 +210,13 @@ export default function Suppliers() {
               <button className="sp-modal-x" onClick={()=>setShowDetail(null)}>✕</button>
             </div>
             <div className="sp-detail-grid">
-              {[['Contact',showDetail.contact],['Phone',showDetail.phone],['Email',showDetail.email],['Address',showDetail.address],['Lead Time',showDetail.leadTimeDays===0?'Same day':showDetail.leadTimeDays+' days'],['Payment',showDetail.paymentTerms],['Total Orders',showDetail.totalOrders],['Total Spent','₹'+showDetail.totalSpent.toLocaleString('en-IN')],['Last Order',showDetail.lastOrder]].map(([l,v],i)=>(
+              {[['Contact',showDetail.contact],['Phone',showDetail.phone],['Email',showDetail.email],['Address',showDetail.address],['Lead Time',showDetail.leadTimeDays===0?'Same day':showDetail.leadTimeDays+' days'],['Payment',showDetail.paymentTerms],['Total Orders',showDetail.totalOrders||0],['Total Spent','₹'+(showDetail.totalSpent||0).toLocaleString('en-IN')],['Last Order',showDetail.lastOrder||'Never']].map(([l,v],i)=>(
                 <div key={i} className="sp-dg-item"><p className="sp-dg-lbl">{l}</p><p className="sp-dg-val">{v}</p></div>
               ))}
             </div>
             <div className="sp-detail-ings">
               <p className="sp-eyebrow">Supplies</p>
-              <div className="sp-ingredients">{showDetail.ingredients.map((ing,i)=><span key={i} className="sp-ing-tag">{ing}</span>)}</div>
+              <div className="sp-ingredients">{(showDetail.ingredients||[]).map((ing,i)=><span key={i} className="sp-ing-tag">{ing}</span>)}</div>
             </div>
             {showDetail.notes&&(
               <div className="sp-detail-notes">

@@ -1,26 +1,41 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import './Stock.css';
+import { useAuth } from '../../context/AuthContext.jsx';
+import {
+  subscribeIngredients,
+  addIngredient,
+  updateStock,
+  updateIngredient,
+  deleteIngredient,
+} from '../../lib/firebase.js';
 
 const UNITS = ['pieces','kg','grams','liters','ml','dozen','box'];
 const CATEGORIES = ['Proteins','Vegetables','Bakery','Dairy','Condiments','Beverages','Other'];
-const INIT = [
-  { id:1, name:'Chicken Patty',  category:'Proteins',   unit:'pcs', currentStock:132, minThreshold:30, maxStock:200, costPerUnit:45,  supplier:'Fresh Farms',  updatedAt:'2h ago' },
-  { id:2, name:'Lettuce',        category:'Vegetables', unit:'kg',  currentStock:3,   minThreshold:5,  maxStock:20,  costPerUnit:80,  supplier:'Green Valley', updatedAt:'5h ago' },
-  { id:3, name:'Burger Bun',     category:'Bakery',     unit:'pcs', currentStock:89,  minThreshold:40, maxStock:200, costPerUnit:8,   supplier:'Bake House',   updatedAt:'1h ago' },
-  { id:4, name:'Mutton Patty',   category:'Proteins',   unit:'pcs', currentStock:0,   minThreshold:20, maxStock:100, costPerUnit:90,  supplier:'Fresh Farms',  updatedAt:'1d ago' },
-  { id:5, name:'Cheese Slice',   category:'Dairy',      unit:'pcs', currentStock:56,  minThreshold:20, maxStock:150, costPerUnit:15,  supplier:'Dairy Direct', updatedAt:'3h ago' },
-  { id:6, name:'Tomato',         category:'Vegetables', unit:'kg',  currentStock:8,   minThreshold:3,  maxStock:25,  costPerUnit:40,  supplier:'Green Valley', updatedAt:'6h ago' },
-  { id:7, name:'Tandoori Sauce', category:'Condiments', unit:'L',   currentStock:4,   minThreshold:5,  maxStock:20,  costPerUnit:120, supplier:'Spice Route',  updatedAt:'2d ago' },
-  { id:8, name:'Pizza Base',     category:'Bakery',     unit:'pcs', currentStock:45,  minThreshold:20, maxStock:100, costPerUnit:25,  supplier:'Bake House',   updatedAt:'4h ago' },
-  { id:9, name:'Mozzarella',     category:'Dairy',      unit:'kg',  currentStock:12,  minThreshold:5,  maxStock:30,  costPerUnit:280, supplier:'Dairy Direct', updatedAt:'1h ago' },
-  { id:10,name:'Onion',          category:'Vegetables', unit:'kg',  currentStock:15,  minThreshold:5,  maxStock:40,  costPerUnit:30,  supplier:'Green Valley', updatedAt:'3h ago' },
-];
 
 const getStatus = (c,t) => c<=0?'critical':c<=t?'low':c<=t*1.5?'warning':'good';
 const STATUS_LABEL = {critical:'Critical',low:'Low',warning:'Warning',good:'In Stock'};
 
+// Convert a Firestore timestamp (or anything) into a short "x ago" string
+const timeAgo = (ts) => {
+  if (!ts) return '—';
+  let date;
+  if (ts.toDate) date = ts.toDate();            // Firestore Timestamp
+  else if (ts.seconds) date = new Date(ts.seconds*1000);
+  else date = new Date(ts);
+  if (isNaN(date.getTime())) return '—';
+  const diff = Math.floor((Date.now() - date.getTime())/1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60)+'m ago';
+  if (diff < 86400) return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+};
+
 export default function Stock() {
-  const [ingredients,setIngredients] = useState(INIT);
+  const { profile, user } = useAuth();
+  const staffId = profile?.id || user?.uid || 'user';
+
+  const [ingredients,setIngredients] = useState([]);
+  const [loading,setLoading]         = useState(true);
   const [search,setSearch]           = useState('');
   const [filterCat,setFilterCat]     = useState('all');
   const [filterStatus,setFilterStatus]=useState('all');
@@ -33,25 +48,46 @@ export default function Stock() {
   const [toast,setToast]             = useState('');
   const [form,setForm] = useState({name:'',category:'Proteins',unit:'pieces',currentStock:0,minThreshold:10,maxStock:100,costPerUnit:0,supplier:''});
 
+  // Live subscription to Firestore — updates automatically when data changes
+  useEffect(()=>{
+    const unsub = subscribeIngredients((data)=>{
+      setIngredients(data);
+      setLoading(false);
+    });
+    return unsub;
+  },[]);
+
   const showToast = msg => { setToast(msg); setTimeout(()=>setToast(''),3000); };
 
-  const handleUpdate = id => {
+  const handleUpdate = async id => {
     const v = parseFloat(editVal);
     if (isNaN(v)||v<0) { showToast('Enter valid quantity'); return; }
-    setIngredients(p=>p.map(i=>i.id===id?{...i,currentStock:v,updatedAt:'just now'}:i));
-    setEditingId(null); showToast('Stock updated');
+    try {
+      await updateStock(id, v, 'Manual update', staffId);
+      setEditingId(null); showToast('Stock updated');
+    } catch (e) {
+      showToast('Update failed'); console.error(e);
+    }
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!form.name.trim()) { showToast('Enter ingredient name'); return; }
-    setIngredients(p=>[...p,{...form,id:Date.now(),currentStock:parseFloat(form.currentStock)||0,minThreshold:parseFloat(form.minThreshold)||10,maxStock:parseFloat(form.maxStock)||100,costPerUnit:parseFloat(form.costPerUnit)||0,updatedAt:'just now'}]);
-    setForm({name:'',category:'Proteins',unit:'pieces',currentStock:0,minThreshold:10,maxStock:100,costPerUnit:0,supplier:''});
-    setShowModal(false); showToast('Ingredient added');
+    try {
+      await addIngredient(form, staffId);
+      setForm({name:'',category:'Proteins',unit:'pieces',currentStock:0,minThreshold:10,maxStock:100,costPerUnit:0,supplier:''});
+      setShowModal(false); showToast('Ingredient added');
+    } catch (e) {
+      showToast('Add failed'); console.error(e);
+    }
   };
 
-  const handleDelete = id => {
+  const handleDelete = async id => {
     if (!window.confirm('Delete this ingredient?')) return;
-    setIngredients(p=>p.filter(i=>i.id!==id)); showToast('Deleted');
+    try {
+      await deleteIngredient(id); showToast('Deleted');
+    } catch (e) {
+      showToast('Delete failed'); console.error(e);
+    }
   };
 
   const exportCSV = () => {
@@ -119,7 +155,6 @@ export default function Stock() {
                 <th>Total Value</th>
                 <th>Status</th>
                 <th>Supplier</th>
-                <th>Days Left</th>
                 <th>Updated</th>
                 <th>Actions</th>
               </tr>
@@ -152,7 +187,7 @@ export default function Stock() {
                     <td className="sc-td-val">₹{(item.currentStock*item.costPerUnit).toFixed(0)}</td>
                     <td><span className={'sc-chip sc-c-'+s}>{STATUS_LABEL[s]}</span></td>
                     <td className="sc-td-sup">{item.supplier||'—'}</td>
-                    <td className="sc-td-time">{item.updatedAt}</td>
+                    <td className="sc-td-time">{timeAgo(item.updatedAt)}</td>
                     <td>
                       <div className="sc-act-cell">
                         <button className="sc-act sc-act-edit" onClick={()=>{setEditingId(item.id);setEditVal(item.currentStock);}}>✏️</button>
@@ -165,7 +200,15 @@ export default function Stock() {
               })}
             </tbody>
           </table>
-          {filtered.length===0&&<div className="sc-empty"><span>🔍</span><p>No ingredients found</p></div>}
+          {!loading && filtered.length===0 && (
+            <div className="sc-empty">
+              <span>📦</span>
+              <p>{ingredients.length===0 ? 'No ingredients yet — add your first one to get started' : 'No ingredients match your filters'}</p>
+            </div>
+          )}
+          {loading && (
+            <div className="sc-empty"><span>⏳</span><p>Loading inventory…</p></div>
+          )}
         </div>
         <div className="sc-footer"><span>Showing {filtered.length} of {ingredients.length}</span><span>Total value: ₹{Math.round(stats.value).toLocaleString('en-IN')}</span></div>
       </div>
@@ -218,7 +261,7 @@ export default function Stock() {
                 <p style={{fontSize:11,color:'var(--inv-text-muted)',marginTop:5,textAlign:'right'}}>{pct.toFixed(0)}% capacity</p>
               </div>
               <div className="sc-dg">
-                {[['Current Stock',showDetail.currentStock+' '+showDetail.unit],['Min Threshold',showDetail.minThreshold+' '+showDetail.unit],['Max Capacity',showDetail.maxStock+' '+showDetail.unit],['Cost per Unit','₹'+showDetail.costPerUnit],['Total Value','₹'+(showDetail.currentStock*showDetail.costPerUnit).toFixed(0)],['Supplier',showDetail.supplier||'—'],['Last Updated',showDetail.updatedAt]].map(([l,v],i)=>(
+                {[['Current Stock',showDetail.currentStock+' '+showDetail.unit],['Min Threshold',showDetail.minThreshold+' '+showDetail.unit],['Max Capacity',showDetail.maxStock+' '+showDetail.unit],['Cost per Unit','₹'+showDetail.costPerUnit],['Total Value','₹'+(showDetail.currentStock*showDetail.costPerUnit).toFixed(0)],['Supplier',showDetail.supplier||'—'],['Last Updated',timeAgo(showDetail.updatedAt)]].map(([l,v],i)=>(
                   <div key={i} className="sc-di"><p className="sc-dl">{l}</p><p className="sc-dv">{v}</p></div>
                 ))}
               </div>

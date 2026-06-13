@@ -1,6 +1,6 @@
 // apps/inventory/src/lib/firebase.js
 import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, query, orderBy, serverTimestamp, getDoc, getDocs, where } from 'firebase/firestore';
+import { getFirestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy, serverTimestamp, getDoc, getDocs, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const cfg = {
@@ -149,3 +149,59 @@ export const updateStaff = (id, data) =>
 
 export const deleteStaff = (id) =>
   deleteDoc(doc(db, 'inventory_staff', id));
+
+/* ── RECIPES / DISHES ── */
+export const subscribeRecipes = (cb) => {
+  const q = query(collection(db, 'inventory_recipes'), orderBy('name'));
+  return onSnapshot(q, snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+};
+
+export const addRecipe = (data) =>
+  addDoc(collection(db, 'inventory_recipes'), {
+    ...data,
+    price: parseFloat(data.price) || 0,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+
+export const updateRecipe = (id, data) =>
+  updateDoc(doc(db, 'inventory_recipes', id), { ...data, updatedAt: serverTimestamp() });
+
+export const deleteRecipe = (id) =>
+  deleteDoc(doc(db, 'inventory_recipes', id));
+
+/* ── STAFF: TRANSACTIONS (advances / deductions / payments) ── */
+export const subscribeTransactions = (cb) => {
+  const q = query(collection(db, 'inventory_staff_transactions'), orderBy('timestamp', 'desc'));
+  return onSnapshot(q, snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+};
+
+export const addTransaction = (data) =>
+  addDoc(collection(db, 'inventory_staff_transactions'), { ...data, timestamp: serverTimestamp() });
+
+export const deleteTransaction = (id) =>
+  deleteDoc(doc(db, 'inventory_staff_transactions', id));
+
+/* ── STAFF: SHIFTS ── */
+export const subscribeShiftAssignments = (cb) => {
+  const q = query(collection(db, 'inventory_staff_shifts'), orderBy('timestamp', 'desc'));
+  return onSnapshot(q, snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+};
+
+export const addShiftAssignment = (data) =>
+  addDoc(collection(db, 'inventory_staff_shifts'), { ...data, timestamp: serverTimestamp() });
+
+/* ── STAFF: ATTENDANCE (one doc per staff member per month) ── */
+export const subscribeAttendance = (cb) => {
+  const q = query(collection(db, 'inventory_staff_attendance'));
+  return onSnapshot(q, snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+};
+
+export const setAttendanceDay = async (staffId, month, year, day, value) => {
+  const docId = `${staffId}_${month}_${year}`;
+  const ref = doc(db, 'inventory_staff_attendance', docId);
+  const snap = await getDoc(ref);
+  const days = snap.exists() ? (snap.data().days || {}) : {};
+  days[day] = value;
+  await setDoc(ref, { staffId, month, year, days }, { merge: true });
+};

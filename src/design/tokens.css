@@ -6,46 +6,48 @@
 ══════════════════════════════════════════════════════ */
 
 :root {
-  /* Backgrounds */
-  --inv-bg:        #F7F6F3;
-  --inv-bg2:       #F0EFEb;
+  /* Backgrounds — warm off-white to suit the gold brand */
+  --inv-bg:        #FAF8F5;
+  --inv-bg2:       #F3F0EA;
   --inv-surface:   #FFFFFF;
-  --inv-surface2:  #F7F6F3;
-  --inv-surface3:  #F0EFEB;
+  --inv-surface2:  #FAF8F5;
+  --inv-surface3:  #F3F0EA;
 
   /* Borders */
-  --inv-border:    #E8E6E1;
-  --inv-border-md: #D5D2CB;
+  --inv-border:    #ECE8E1;
+  --inv-border-md: #D8D2C8;
 
-  /* Brand accent — used sparingly */
-  --inv-primary:      #16A34A;
-  --inv-primary-d:    #15803D;
-  --inv-primary-glow: rgba(22,163,74,0.12);
-  --inv-primary-bg:   rgba(22,163,74,0.06);
+  /* Brand accent — BlueBliss RED (the cloche) */
+  --inv-primary:      #E63946;
+  --inv-primary-d:    #C42E3A;
+  --inv-primary-glow: rgba(230,57,70,0.14);
+  --inv-primary-bg:   rgba(230,57,70,0.07);
 
-  /* Semantic */
-  --inv-gold:   #B45309;
-  --inv-gold-bg: rgba(180,83,9,0.07);
-  --inv-red:    #DC2626;
-  --inv-red-bg: rgba(220,38,38,0.06);
-  --inv-orange: #D97706;
-  --inv-orange-bg: rgba(217,119,6,0.07);
-  --inv-blue:   #2563EB;
-  --inv-blue-bg: rgba(37,99,235,0.07);
+  /* Brand secondary — BlueBliss GOLD (the lettering) */
+  --inv-gold:    #E0A800;
+  --inv-gold-bg: rgba(224,168,0,0.10);
+
+  /* Semantic status — kept distinct from brand for readability */
+  --inv-red:    #D00000;
+  --inv-red-bg: rgba(208,0,0,0.07);
+  --inv-orange: #F59E0B;
+  --inv-orange-bg: rgba(245,158,11,0.10);
+  --inv-blue:   #2A9D8F;
+  --inv-blue-bg: rgba(42,157,143,0.08);
 
   /* Typography */
-  --inv-text:       #1C1B19;
+  --inv-text:       #2B2B2B;
   --inv-text-dim:   #4A4845;
   --inv-text-muted: #9B9894;
   --inv-text-xmuted:#BCBAB6;
 
   /* Sidebar */
   --inv-sb-bg:      #FFFFFF;
-  --inv-sb-border:  #E8E6E1;
+  --inv-sb-border:  #ECE8E1;
   --inv-sb-text:    #6B6965;
-  --inv-sb-hover:   #F4F3F0;
-  --inv-sb-active:  #F0FDF4;
-  --inv-sb-active-text: #15803D;
+  --inv-sb-hover:   #FBF3F0;
+  --inv-sb-active:  #FDEEEF;
+  --inv-sb-active-text: #C42E3A;
 
   /* Fonts */
   --font-main:  'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -70,37 +72,44 @@
 
 /* Dark mode */
 [data-theme="dark"] {
-  --inv-bg:        #111110;
-  --inv-bg2:       #161513;
-  --inv-surface:   #1C1B19;
-  --inv-surface2:  #232220;
-  --inv-surface3:  #2A2927;
-  --inv-border:    #2E2D2B;
-  --inv-border-md: #3D3B38;
-  --inv-primary:      #22C55E;
-  --inv-primary-d:    #16A34A;
-  --inv-primary-glow: rgba(34,197,94,0.15);
-  --inv-primary-bg:   rgba(34,197,94,0.08);
-  --inv-gold:     #F59E0B;
-  --inv-gold-bg:  rgba(245,158,11,0.1);
-  --inv-red:      #F87171;
-  --inv-red-bg:   rgba(248,113,113,0.08);
-  --inv-orange:   #FB923C;
-  --inv-orange-bg:rgba(251,146,60,0.08);
-  --inv-blue:     #60A5FA;
-  --inv-blue-bg:  rgba(96,165,250,0.08);
-  --inv-text:       #FAFAF9;
-  --inv-text-dim:   #D6D4D0;
-  --inv-text-muted: #78766F;
-  --inv-text-xmuted:#4A4845;
-  --inv-sb-bg:      #161513;
-  --inv-sb-border:  #2E2D2B;
-  --inv-sb-text:    #78766F;
-  --inv-sb-hover:   #232220;
-  --inv-sb-active:  rgba(34,197,94,0.08);
-  --inv-sb-active-text: #22C55E;
-}
+  --inv-bg:        #141210;
+  --inv-bg2:       #1A1714;
+  --inv-surface:   #1F1B18;
+  --inv-surface2:  #262220;
+  --inv-surface3:  #2D2926;
+  --inv-border:    #332E2A;
+  --inv-border-md: #423C37;
 
+  /* Brand accent — BlueBliss RED, brightened for dark bg */
+  --inv-primary:      #FF5A66;
+  --inv-primary-d:    #E63946;
+  --inv-primary-glow: rgba(255,90,102,0.18);
+  --inv-primary-bg:   rgba(255,90,102,0.10);
+
+  /* Brand secondary — GOLD, brightened */
+  --inv-gold:     #F5C518;
+  --inv-gold-bg:  rgba(245,197,24,0.12);
+
+  /* Semantic status */
+  --inv-red:      #FF6B6B;
+  --inv-red-bg:   rgba(255,107,107,0.10);
+  --inv-orange:   #FBBF24;
+  --inv-orange-bg:rgba(251,191,36,0.10);
+  --inv-blue:     #4FD1C5;
+  --inv-blue-bg:  rgba(79,209,197,0.10);
+
+  --inv-text:       #FAF7F4;
+  --inv-text-dim:   #D6D0CA;
+  --inv-text-muted: #8A847D;
+  --inv-text-xmuted:#544E48;
+
+  --inv-sb-bg:      #1A1714;
+  --inv-sb-border:  #332E2A;
+  --inv-sb-text:    #8A847D;
+  --inv-sb-hover:   #262220;
+  --inv-sb-active:  rgba(255,90,102,0.10);
+  --inv-sb-active-text: #FF5A66;
+}
 /* ── Resets ── */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 body {
